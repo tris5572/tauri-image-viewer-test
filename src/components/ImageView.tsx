@@ -14,9 +14,8 @@ type Props = {
  */
 export function ImageView(props: Props) {
   return (
-    <div className="font-bold">
-      {convertFileSrc(props.path)}
-      <img src={convertFileSrc(props.path)} />
+    <div className="h-dvh bg-stone-900 flex justify-center items-center">
+      <img className="max-h-dvh" src={convertFileSrc(props.path)} />
     </div>
   );
 }
