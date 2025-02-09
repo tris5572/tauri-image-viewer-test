@@ -4,7 +4,7 @@ type Props = {
   /**
    * 画像のパス
    */
-  path: string;
+  path: string | null;
 };
 
 /**
@@ -15,7 +15,9 @@ type Props = {
 export function ImageView(props: Props) {
   return (
     <div className="h-dvh bg-stone-900 flex justify-center items-center">
-      <img className="max-h-dvh" src={convertFileSrc(props.path)} />
+      {props.path && (
+        <img className="max-h-dvh" src={convertFileSrc(props.path)} />
+      )}
     </div>
   );
 }

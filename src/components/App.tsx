@@ -7,7 +7,7 @@ import { ImageView } from "./ImageView";
 function App() {
   // const [greetMsg, setGreetMsg] = useState("");
   // const [name, setName] = useState("");
-  const [imagePath, setImagePath] = useState("");
+  const [imagePath, setImagePath] = useState<string | null>(null);
 
   // async function greet() {
   //   // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
