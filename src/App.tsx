@@ -15,12 +15,12 @@ function App() {
 
   // ファイルをドロップしたときのイベントを設定
   useEffect(() => {
-    const unlisten = listen<string>('tauri://drag-drop', (event) => {
+    const unlisten = listen<string>("tauri://drag-drop", (event) => {
       console.log("drag-drop", event.payload);
     });
     return () => {
       unlisten.then((f) => f());
-    }
+    };
   }, []);
 
   return (
@@ -49,7 +49,10 @@ function App() {
       >
         <input
           id="greet-input"
-          onChange={(e) => { setName(e.currentTarget.value); console.log(e.currentTarget.value) }}
+          onChange={(e) => {
+            setName(e.currentTarget.value);
+            console.log(e.currentTarget.value);
+          }}
           placeholder="Enter a name..."
         />
         <button type="submit">Greet</button>
