@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import "./App.css";
 
 function App() {
@@ -11,6 +12,16 @@ function App() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     setGreetMsg(await invoke("greet", { name }));
   }
+
+  // ファイルをドロップしたときのイベントを設定
+  useEffect(() => {
+    const unlisten = listen<string>('tauri://drag-drop', (event) => {
+      console.log("drag-drop", event.payload);
+    });
+    return () => {
+      unlisten.then((f) => f());
+    }
+  }, []);
 
   return (
     <main className="container">
@@ -38,7 +49,7 @@ function App() {
       >
         <input
           id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
+          onChange={(e) => { setName(e.currentTarget.value); console.log(e.currentTarget.value) }}
           placeholder="Enter a name..."
         />
         <button type="submit">Greet</button>
