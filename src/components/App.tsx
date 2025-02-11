@@ -7,8 +7,22 @@ import { ImageView } from "./ImageView";
 function App() {
   const [imagePath, setImagePath] = useState<string | null>(null);
 
+  // ファイルがドロップされたときの処理
   async function handleDrop(path: string) {
-    console.log(await invoke("get_image_file_list", { path }));
+    const fileList = (await invoke("get_image_file_list", {
+      path,
+    })) as string[];
+
+    if (fileList.find((file) => file === path)) {
+      // ドロップされたファイルが画像だったときは、そのまま表示する
+      setImagePath(path);
+    } else {
+      // 画像以外がドロップされたときは、当該フォルダの中の先頭の画像を表示する
+      // 画像ファイルがない場合は何もしない
+      if (fileList.length > 0) {
+        setImagePath(fileList[0]);
+      }
+    }
   }
 
   // ファイルをドロップしたときのイベントを設定
@@ -16,8 +30,6 @@ function App() {
     const unlisten = listen<{ paths: string[] }>(
       "tauri://drag-drop",
       (event) => {
-        console.log("drag-drop", event.payload);
-        setImagePath(event.payload.paths[0]);
         handleDrop(event.payload.paths[0]);
       }
     );
