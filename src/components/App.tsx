@@ -6,12 +6,14 @@ import { ImageView } from "./ImageView";
 
 function App() {
   const [imagePath, setImagePath] = useState<string | null>(null);
+  const [imageFileList, setImageFileList] = useState<string[]>([]);
 
   // ファイルがドロップされたときの処理
   async function handleDrop(path: string) {
     const fileList = (await invoke("get_image_file_list", {
       path,
     })) as string[];
+    setImageFileList(fileList);
 
     if (fileList.find((file) => file === path)) {
       // ドロップされたファイルが画像だったときは、そのまま表示する
@@ -21,6 +23,26 @@ function App() {
       // 画像ファイルがない場合は何もしない
       if (fileList.length > 0) {
         setImagePath(fileList[0]);
+      }
+    }
+  }
+
+  // キーボード操作のイベントハンドラ
+  function keyDownHandler(event: React.KeyboardEvent) {
+    switch (event.key) {
+      case "ArrowRight": {
+        const currentIndex = imageFileList.indexOf(imagePath!);
+        if (currentIndex < imageFileList.length - 1) {
+          setImagePath(imageFileList[currentIndex + 1]);
+        }
+        break;
+      }
+      case "ArrowLeft": {
+        const currentIndex = imageFileList.indexOf(imagePath!);
+        if (currentIndex > 0) {
+          setImagePath(imageFileList[currentIndex - 1]);
+        }
+        break;
       }
     }
   }
@@ -38,7 +60,11 @@ function App() {
     };
   }, []);
 
-  return <ImageView path={imagePath} />;
+  return (
+    <div onKeyDown={keyDownHandler} tabIndex={0}>
+      <ImageView path={imagePath} />
+    </div>
+  );
 }
 
 export default App;
