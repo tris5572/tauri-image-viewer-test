@@ -11,8 +11,12 @@ function App() {
 
   // async function greet() {
   //   // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  //   setGreetMsg(await invoke("greet", { name }));
+  //   console.log(await invoke("greet", { name: "名前" }));
   // }
+
+  async function handleDrop(path: string) {
+    console.log(await invoke("get_image_file_list", { path }));
+  }
 
   // ファイルをドロップしたときのイベントを設定
   useEffect(() => {
@@ -21,6 +25,7 @@ function App() {
       (event) => {
         console.log("drag-drop", event.payload);
         setImagePath(event.payload.paths[0]);
+        handleDrop(event.payload.paths[0]);
       }
     );
     return () => {
