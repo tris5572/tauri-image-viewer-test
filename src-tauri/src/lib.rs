@@ -1,9 +1,3 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
 /// 渡されたパスのディレクトリ内の画像ファイルの一覧を取得する
 ///
 /// 画像であることの判定は拡張子を元にして行う
@@ -50,7 +44,7 @@ fn get_image_file_list(path: &str) -> Vec<String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, get_image_file_list])
+        .invoke_handler(tauri::generate_handler![get_image_file_list])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
