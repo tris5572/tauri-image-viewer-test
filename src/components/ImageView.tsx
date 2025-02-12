@@ -15,8 +15,12 @@ type Props = {
 export function ImageView(props: Props) {
   return (
     <div className="h-dvh bg-stone-900 flex justify-center items-center">
-      {props.path && (
+      {props.path ? (
         <img className="max-h-dvh" src={convertFileSrc(props.path)} />
+      ) : (
+        <div className="text-stone-200">
+          画像またはフォルダをドロップしてください
+        </div>
       )}
     </div>
   );
