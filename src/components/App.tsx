@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import "./App.css";
@@ -13,39 +13,42 @@ function App() {
     const fileList = (await invoke("get_image_file_list", {
       path,
     })) as string[];
-    setImageFileList(fileList);
+    setImageFileList(() => [...fileList]);
 
     if (fileList.find((file) => file === path)) {
       // ドロップされたファイルが画像だったときは、そのまま表示する
-      setImagePath(path);
+      setImagePath(() => path);
     } else {
       // 画像以外がドロップされたときは、当該フォルダの中の先頭の画像を表示する
       // 画像ファイルがない場合は何もしない
       if (fileList.length > 0) {
-        setImagePath(fileList[0]);
+        setImagePath(() => fileList[0]);
       }
     }
   }
 
-  // キーボード操作のイベントハンドラ
-  function keyDownHandler(event: React.KeyboardEvent) {
-    switch (event.key) {
-      case "ArrowRight": {
-        const currentIndex = imageFileList.indexOf(imagePath!);
-        if (currentIndex < imageFileList.length - 1) {
-          setImagePath(imageFileList[currentIndex + 1]);
-        }
-        break;
+  // キーが押されたときの処理
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const key = event.key;
+      const currentIndex = imageFileList.indexOf(imagePath!);
+      console.log(key, currentIndex, imageFileList, imagePath);
+
+      switch (key) {
+        case "ArrowRight":
+          if (currentIndex < imageFileList.length - 1) {
+            setImagePath(imageFileList[currentIndex + 1]);
+          }
+          break;
+        case "ArrowLeft":
+          if (currentIndex > 0) {
+            setImagePath(imageFileList[currentIndex - 1]);
+          }
+          break;
       }
-      case "ArrowLeft": {
-        const currentIndex = imageFileList.indexOf(imagePath!);
-        if (currentIndex > 0) {
-          setImagePath(imageFileList[currentIndex - 1]);
-        }
-        break;
-      }
-    }
-  }
+    },
+    [imageFileList, imagePath]
+  );
 
   // ファイルをドロップしたときのイベントを設定
   useEffect(() => {
@@ -60,11 +63,15 @@ function App() {
     };
   }, []);
 
-  return (
-    <div onKeyDown={keyDownHandler} tabIndex={0}>
-      <ImageView path={imagePath} />
-    </div>
-  );
+  // キー押下のイベントを設定
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
+  return <ImageView path={imagePath} />;
 }
 
 export default App;
